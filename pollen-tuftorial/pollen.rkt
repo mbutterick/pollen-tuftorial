@@ -3,11 +3,8 @@
 (provide (all-defined-out))
 
 (define-tag-function (root attrs els)
-  #R els
   (txexpr 'article null
-          (decode-elements els
-                           #:txexpr-proc smart-quotes
-                           #:exclude-tags '(article section pre code))))
+          (decode-elements els #:txexpr-proc smart-quotes)))
 
 (define-tag-function (section attrs els)
   (txexpr 'section attrs (decode-paragraphs els)))
@@ -29,8 +26,16 @@
 (define-tag-function (subtitle attrs els)
   (txexpr 'p (list '(class "subtitle")) els))
 
+(define (harden-quotes str)
+  (for/list ([m (in-list (regexp-match* #rx"'|\"" str #:gap-select? #true))])
+            (match m
+              ["\"" 'quot]
+              ["'" 'apos]
+              [_ m])))
+
 (define-tag-function ($ attrs els)
-  (txexpr 'code attrs els))
+  (decode (txexpr 'code attrs els)
+          #:string-proc harden-quotes))
 
 (define-tag-function ($$ attrs els)
   (txexpr 'pre attrs (list (apply $ attrs els))))
