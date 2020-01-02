@@ -1,4 +1,4 @@
-#lang debug racket
+#lang racket
 (require txexpr pollen/decode pollen/tag)
 (provide (all-defined-out))
 
@@ -9,12 +9,19 @@
 (define-tag-function (section attrs els)
   (txexpr 'section attrs (decode-paragraphs els)))
 
+(define (heading heading-tag text)
+  (txexpr*
+   heading-tag
+   `((id ,(string-replace(string-downcase text) " " "-")))
+   text))
+
 (define-tag-function (title attrs els)
-  `(@ (h1 ,attrs ,(first els)) ,(apply subtitle null (rest els))))
+  `(@ ,(heading 'h1 (first els)) ,(apply subtitle null (rest els))))
 
 
-(define (sectioner level attrs els)
-  (apply section attrs (cons (list level (first els)) (rest els))))
+(define (sectioner heading-tag attrs els)
+  (apply section attrs (cons (heading heading-tag (first els))
+                             (rest els))))
 
 (define-tag-function (section-h1 attrs els) (sectioner 'h1 attrs els))
 (define-tag-function (section-h2 attrs els) (sectioner 'h2 attrs els))
@@ -50,3 +57,44 @@
 
 (define-tag-function (newthought attrs els)
   (txexpr 'span (list '(class "newthought")) els))
+
+
+(define-tag-function (sans attrs els)
+  (txexpr 'span (cons '(class "sans") attrs) els))
+
+
+(define-tag-function (sidenote attrs els)
+  (define sidenote-id (format "sn-id-~a" (eq-hash-code els)))
+  `(@
+    (label ((for ,sidenote-id) (class "margin-toggle sidenote-number")))
+    (input ((type "checkbox")(id ,sidenote-id)(class "margin-toggle")))
+    (span ((class "sidenote")) ,@els)))
+
+
+(define-tag-function (marginnote attrs els)
+  (define marginnote-id (format "mn-id-~a" (eq-hash-code els)))
+  `(@
+    (label ((for ,marginnote-id) (class "margin-toggle")) 8853)
+    (input ((type "checkbox")(id ,marginnote-id)(class "margin-toggle")))
+    (span ((class "marginnote")) ,@els)))
+
+
+(define-tag-function (figure attrs els)
+  (txexpr
+   'figure
+   null
+   (append els
+           (list (txexpr 'img `((src ,(attr-ref attrs 'src))
+                                (alt ,(attr-ref attrs 'alt))) null)))))
+
+(define-tag-function (figure-fullwidth attrs els)
+  (attr-join (apply figure attrs els) 'class "fullwidth"))
+
+
+(define-tag-function (youtube attrs els)
+  `(figure ((class "iframe-wrapper"))
+          (iframe ((width "853")
+                   (height "480")
+                   (src ,(string-append "https://www.youtube.com/embed/" (attr-ref attrs 'id)))
+                   (frameborder "0")
+                   (allowfullscreen "true")))))
