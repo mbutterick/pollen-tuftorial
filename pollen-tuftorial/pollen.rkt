@@ -98,3 +98,12 @@
                    (src ,(string-append "https://www.youtube.com/embed/" (attr-ref attrs 'id)))
                    (frameborder "0")
                    (allowfullscreen "true")))))
+
+(define-tag-function (epigraph attrs els)
+  (match-define (list paras ... footer-para) (decode-paragraphs els))
+  (txexpr* 'div
+          '((class "epigraph"))
+  (txexpr 'blockquote
+          attrs
+          (append paras
+                  (list (txexpr 'footer null (get-elements footer-para)))))))

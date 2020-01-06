@@ -48,6 +48,26 @@ Links in Tufte CSS match the body text in color and do not change on mouseover o
 }
 
 ◊section-h2{
+Epigraphs
+
+◊epigraph{The English language . . . becomes ugly and inaccurate because our thoughts are foolish, but the slovenliness of our language makes it easier for us to have foolish thoughts.
+
+George Orwell, "Politics and the English Language"}
+
+◊epigraph{For a successful technology, reality must take precedence over public relations, for Nature cannot be fooled.
+
+Richard P. Feynman, ◊em{"What Do You Care What Other People Think?"}}
+
+◊epigraph{I do not paint things, I paint only the differences between things.
+
+Henri Matisse, ◊em{Henri Matisse Dessins: thèmes et variations} (Paris, 1943), 37}
+
+If you’d like to introduce your page or a section of your page with some quotes, use epigraphs.
+
+}
+
+
+◊section-h2{
 Figures
 
 Figures should try to use the ◊code{figure} element, which by default are constrained to the main column. Don't wrap figures in a paragraph tag. Any label or margin note goes in a regular margin note inside the figure. For example, most of the time one should introduce a figure directly into the main flow of discussion, like so:
