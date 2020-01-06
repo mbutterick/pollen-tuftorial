@@ -4,6 +4,7 @@ pollen.cache
 
 # for Racket
 compiled/
+doc/*
 
 # for Pollen
 pollen-cache/
